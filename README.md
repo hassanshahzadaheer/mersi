@@ -37,6 +37,23 @@ subscribe, and manage their compliance evaluations.
     - Upon successful login, users are redirected to their dashboard.
     - Added **Logout option** to user’s profile menu.
 
+### Feature 3: Pricing Package Integration
+
+- **User Story**: As a client, I want to view available pricing plans and their features, so I can choose the best
+  option for my needs.
+
+    - Pricing package interface added with tiered plans.
+    - Plans display dynamically based on the selected duration (e.g., 1 year, 2 years).
+    - Users can view details like plan features and pricing.
+    - Integrated **Subscribe Now** button for easy plan selection.
+
+### Feature 4: Admin Template & Profile Page Integration
+
+- **User Story**: As an admin, I need access to a dedicated panel for managing users and subscriptions.
+
+    - Admin template integrated, providing essential navigation and control panels.
+    - Profile page fully integrated, allowing users to view and update their personal information.
+
 ---
 
 ## Current Bugs
@@ -55,15 +72,15 @@ subscribe, and manage their compliance evaluations.
 
 ## Next Steps
 
-- Finalize **Subscription Feature**:
-    - Integrate a payment gateway (Stripe, PayPal, etc.) for seamless subscription purchases.
-    - Add subscription plans and manage billing cycles.
+- **Payments and Survey Forms**:
+    - Integrate a payment gateway (e.g., Stripe, PayPal) for subscription purchases.
+    - Develop and implement forms for gathering survey data, aligned with the platform’s compliance evaluation focus.
 
 - **Dashboard Improvements**:
     - Allow users to see their compliance progress and reports after logging in.
 
-- **Admin Panel**:
-    - Create an admin panel to manage user subscriptions and platform settings.
+- **Enhanced Admin Panel**:
+    - Additional admin panel controls for managing user subscriptions and platform settings.
 
 ---
 
