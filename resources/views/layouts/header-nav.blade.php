@@ -52,7 +52,8 @@
                         <div class="dropdown-divider"></div>
                     </li>
                     <li>
-                        <x-responsive-nav-link :href="route('profile.edit')" class="dropdown-item">
+                        <x-responsive-nav-link :href="route('profile.edit')" active="request()->routeIs('profile')"
+                                               class="dropdown-item">
                             <i class="bx bx-user me-2"></i>
                             <span class="align-middle"> {{ __('Profile') }}</span>
                         </x-responsive-nav-link>

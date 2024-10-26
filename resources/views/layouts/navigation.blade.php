@@ -1,6 +1,6 @@
 <!-- Menu -->
 
-<aside x-data="{ open: false }"  id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
     <div class="app-brand demo">
         <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="app-brand-link">
              <span class="app-brand-logo demo">
@@ -71,39 +71,28 @@
     <ul class="menu-inner py-1">
         <!-- Dashboard -->
         <li class="menu-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-            <x-nav-link :href="route('dashboard')" >
+            <x-nav-link :href="route('dashboard')">
                 <i class="menu-icon tf-icons bx bx-home-circle"></i>
                 <div data-i18n="Analytics">Dashboard</div>
             </x-nav-link>
         </li>
 
         <li class="menu-header small text-uppercase">
-            <span class="menu-header-text">Pages</span>
-        </li>
-        <li class="menu-item">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-dock-top"></i>
-                <div data-i18n="Account Settings">Account Settings</div>
-            </a>
-            <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="pages-account-settings-account.html" class="menu-link">
-                        <div data-i18n="Account">Account</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="pages-account-settings-notifications.html" class="menu-link">
-                        <div data-i18n="Notifications">Notifications</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="pages-account-settings-connections.html" class="menu-link">
-                        <div data-i18n="Connections">Connections</div>
-                    </a>
-                </li>
-            </ul>
+            <span class="menu-header-text">Subscription</span>
         </li>
 
+        <li class="menu-item {{ request()->routeIs('subscription.index')  ? 'active' : '' }}">
+            <x-nav-link :href="route('subscription.index')">
+                <i class="menu-icon tf-icons bx bx-credit-card"></i>
+                <div data-i18n="Analytics">Pricing Packages</div>
+            </x-nav-link>
+        </li>
+        <li class="menu-item ">
+            <x-nav-link :href="route('subscription.index')">
+                <i class="menu-icon tf-icons bx bx-credit-card"></i>
+                <div data-i18n="Analytics">My Payments</div>
+            </x-nav-link>
+        </li>
 
 
         <!-- Misc -->

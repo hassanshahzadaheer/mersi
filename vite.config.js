@@ -1,6 +1,5 @@
 import {defineConfig} from 'vite';
 import laravel from 'laravel-vite-plugin';
-import {exec} from 'child_process';
 
 export default defineConfig({
     plugins: [
@@ -26,26 +25,6 @@ export default defineConfig({
             refresh: true,
         }),
     ],
-    build: {
-        rollupOptions: {
-            output: {
-                dir: 'public/build',
-            },
-        },
-        // Run the copy command after the build completes
-        writeBundle() {
-            exec('npm run copy-assets', (error, stdout, stderr) => {
-                if (error) {
-                    console.error(`Error copying assets: ${error.message}`);
-                    return;
-                }
-                if (stderr) {
-                    console.error(`Error: ${stderr}`);
-                    return;
-                }
-                console.log(`Assets copied successfully: ${stdout}`);
-            });
-        },
-    },
+
 });
 
