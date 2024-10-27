@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Subscription;
+use Illuminate\support\Facades\Auth;
+
 class SubscriptionController extends Controller
 {
     public function index()
@@ -36,6 +39,15 @@ class SubscriptionController extends Controller
         ];
 
         return view('subscription.index', compact('plans'));
+    }
+
+    public function payments()
+    {
+        // Retrieve the authenticated user's subscriptions
+        $subscriptions = Subscription::where('user_id', Auth::id())->get();
+
+        // Pass data to the view
+        return view('subscription.payments.payment-list', compact('subscriptions'));
     }
 
 

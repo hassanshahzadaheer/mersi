@@ -18,6 +18,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/price-plan', [SubscriptionController::class, 'index'])->name('subscription.index');
+    Route::get('/price-plan/payment', [SubscriptionController::class, 'payments'])->name('subscription.payment');
 });
 
 require __DIR__.'/auth.php';

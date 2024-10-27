@@ -87,8 +87,8 @@
                 <div data-i18n="Analytics">Pricing Packages</div>
             </x-nav-link>
         </li>
-        <li class="menu-item ">
-            <x-nav-link :href="route('subscription.index')">
+        <li class="menu-item {{ request()->routeIs('subscription.payment')  ? 'active' : '' }}">
+            <x-nav-link :href="route('subscription.payment')">
                 <i class="menu-icon tf-icons bx bx-credit-card"></i>
                 <div data-i18n="Analytics">My Payments</div>
             </x-nav-link>
