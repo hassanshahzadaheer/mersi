@@ -95,8 +95,27 @@
         </li>
 
 
+        <li class="menu-header small text-uppercase">
+            <span class="menu-header-text">Interactive Compliance </span>
+        </li>
+
+        <li class="menu-item {{ request()->routeIs('survey.index') ? 'active' : '' }}">
+            <x-nav-link :href="route('survey.index')">
+                <i class="menu-icon tf-icons bx bx-grid"></i>
+                <div data-i18n="Analytics">Survey</div>
+            </x-nav-link>
+        </li>
+
+        <li class="menu-item ">
+            <x-nav-link>
+
+                <i class="menu-icon tf-icons bx bx-check-circle"></i>
+                <div data-i18n="Analytics">Evaluation</div>
+            </x-nav-link>
+        </li>
+
         <!-- Misc -->
-        <li class="menu-header small text-uppercase"><span class="menu-header-text">Misc</span></li>
+        <li class="menu-header small text-uppercase"><span class="menu-header-text">Reporting</span></li>
 
         <li class="menu-item">
             <a
@@ -107,6 +126,14 @@
                 <i class="menu-icon tf-icons bx bx-file"></i>
                 <div data-i18n="Documentation">Documentation</div>
             </a>
+        </li>
+
+        <li class="menu-item ">
+            <x-nav-link>
+
+                <i class="menu-icon tf-icons bx bx-repost"></i>
+                <div data-i18n="Analytics">Audit Reports</div>
+            </x-nav-link>
         </li>
     </ul>
 </aside>

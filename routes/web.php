@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\Survey;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -17,8 +18,12 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+//    price module
     Route::get('/price-plan', [SubscriptionController::class, 'index'])->name('subscription.index');
     Route::get('/price-plan/payment', [SubscriptionController::class, 'payments'])->name('subscription.payment');
+
+//    survey module
+    Route::get('/survey', [Survey::class, 'index'])->name('survey.index');
 });
 
 require __DIR__.'/auth.php';

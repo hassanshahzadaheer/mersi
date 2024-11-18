@@ -42,9 +42,14 @@
                             </ul>
                         </div>
                     </template>
-                    <x-primary-button class="btn btn-primary d-grid w-100">
-                        {{ __('Subscribe Now') }}
-                    </x-primary-button>
+                    <x-nav-link :href="route('subscription.payment')">
+
+                        <x-primary-button class="btn btn-primary d-grid w-100">
+
+                            <div data-i18n="Analytics">Subscribe Now</div>
+
+                        </x-primary-button>
+                    </x-nav-link>
                 </div>
             </div>
         </div>
@@ -78,9 +83,14 @@
                             </ul>
                         </div>
                     </template>
-                    <x-primary-button class="btn btn-primary d-grid w-100">
-                        {{ __('Subscribe Now') }}
-                    </x-primary-button>
+                    <x-nav-link :href="route('subscription.payment')">
+
+                        <x-primary-button class="btn btn-primary d-grid w-100">
+
+                            <div data-i18n="Analytics">Subscribe Now</div>
+
+                        </x-primary-button>
+                    </x-nav-link>
                 </div>
             </div>
         </div>
