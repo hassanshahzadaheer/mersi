@@ -24,6 +24,8 @@ Route::middleware('auth')->group(function () {
 
 //    survey module
     Route::get('/survey', [Survey::class, 'index'])->name('survey.index');
+    Route::get('/survey/create', [Survey::class, 'create'])->name('survey.create');
+
 });
 
 require __DIR__.'/auth.php';

@@ -106,6 +106,13 @@
             </x-nav-link>
         </li>
 
+        <li class="menu-item {{ request()->routeIs('survey.create') ? 'active' : '' }}">
+            <x-nav-link :href="route('survey.create')">
+                <i class="menu-icon tf-icons bx bx-grid"></i>
+                <div data-i18n="Analytics">Create survey</div>
+            </x-nav-link>
+        </li>
+
         <li class="menu-item ">
             <x-nav-link>
 
