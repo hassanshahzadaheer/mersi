@@ -25,6 +25,7 @@ Route::middleware('auth')->group(function () {
 //    survey module
     Route::get('/survey', [Survey::class, 'index'])->name('survey.index');
     Route::get('/survey/create', [Survey::class, 'create'])->name('survey.create');
+    Route::post('/survey/store', [Survey::class, 'store'])->name('survey.store');
 
 });
 

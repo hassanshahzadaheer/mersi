@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Exception;
-use Illuminate\Validation\ValidationException;
+use App\Models\SurveyBusinessProfile;
+use App\Models\SurveyQuestionCategory;
+use App\Models\SurveyEvaluation;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class Survey extends Controller
 {
@@ -14,61 +18,55 @@ class Survey extends Controller
 
     public function store(Request $request)
     {
-        // Log the incoming request data for debugging purposes
-        Log::debug('Incoming survey data: ', $request->all());
-
         try {
-            // Validate the request inputs
+
+            DB::beginTransaction();
+
+            // Validate general information
             $validated = $request->validate([
-                'company_name' => 'required|string|max:255',
-                'contact_person' => 'required|string|max:255',
-                'company_website' => 'required|url|max:255',
-                'company_industry' => 'required|string|max:255',
+                'company_name' => 'required',
+                'contact_person' => 'required',
+                'company_website' => 'required',
+                'company_industry' => 'required',
                 'service_request' => 'required|in:operations-optimization,project-management,ISO-9001-2015,CMMI-for-service,CMMI-for-development,other',
-            ], [
-                'company_name.required' => 'The company name field is required.',
-                'contact_person.required' => 'The contact person field is required.',
-                'company_website.required' => 'The company website field is required.',
-                'company_website.url' => 'Please provide a valid URL for the company website.',
-                'company_industry.required' => 'The company industry field is required.',
-                'service_request.required' => 'Please select a service request type.',
-                'service_request.in' => 'The selected service request type is invalid.',
+                'questions' => 'required|array'
             ]);
 
-            // Log validated data
-            Log::info('Survey data validated successfully.', $validated);
 
-            // Store data in the database (example)
-            $survey = Survey::create($validated);
-
-            // Log successful storage
-            Log::info('Survey data stored successfully.', ['survey_id' => $survey->id]);
-
-            return redirect()->back()->with('success', 'Survey submitted successfully.');
-
-        } catch (ValidationException $e) {
-            // Log validation errors
-            Log::error('Validation failed.', [
-                'errors' => $e->validator->errors()->toArray()
+            // Create business profile
+            $businessProfile = SurveyBusinessProfile::create([
+                'company_name' => $validated['company_name'],
+                'contact_person' => $validated['contact_person'],
+                'company_website' => $validated['company_website'],
+                'company_industry' => $validated['company_industry'],
+                'service_request' => $validated['service_request'],
             ]);
 
-            // Re-throw the exception to allow Laravel to handle it (e.g., redirect back with errors)
-            throw $e;
-        } catch (Exception $e) {
-            // Log unexpected exceptions
-            Log::critical('Unexpected error occurred while storing survey.', [
-                'error_message' => $e->getMessage(),
-                'stack_trace' => $e->getTraceAsString(),
-            ]);
+            // Store survey responses
+            foreach ($request->questions as $questionId => $response) {
+                $evaluation = SurveyEvaluation::create([
+                    'business_profile_id' => $businessProfile->id,
+                    'question_id' => $questionId,
+                    'response' => $response,
+                ]);
+            }
 
-            return redirect()->back()->with('error', 'An unexpected error occurred. Please try again later.');
+            DB::commit();
+
+            return redirect()->back()->with('success', 'Survey saved successfully!');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()
+                ->with('error', 'Failed to save survey. Please try again.')
+                ->withInput();
         }
     }
 
-    // Handle the form submission to store survey data
-
     public function create()
     {
-        return view('survey.create');
+        // give me all the category which related to the question
+        $categories = SurveyQuestionCategory::with('questions')->get();
+        return view('survey.create', compact('categories'));
     }
 }
