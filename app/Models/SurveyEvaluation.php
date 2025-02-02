@@ -15,6 +15,6 @@ class SurveyEvaluation extends Model
 
     public function businessProfile()
     {
-        return $this->belongsTo(BusinessProfile::class, 'business_profile_id');
+        return $this->belongsTo(SurveyBusinessProfile::class, 'business_profile_id');
     }
 }

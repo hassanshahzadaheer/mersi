@@ -82,51 +82,50 @@
         <div class="col-12 mb-4">
             <div class="card overflow-auto" style="max-height: 500px;">
                 <!-- Questions -->
-                 <div class="card-body">
-                       <div class="col-12">
-                              <h6>{{ __('Business Intake Evaluation') }}</h6>
-                            <hr class="mt-0">
-                        </div>
+                <div class="card-body">
+                    <div class="col-12">
+                        <h6>{{ __('Business Intake Evaluation') }}</h6>
+                        <hr class="mt-0">
+                    </div>
 
-<div class="row gy-3 mt-0">
-                    @foreach($categories as $category)
-                        <!-- Category Header -->
-                        <div class="col-12">
-                            <h6><strong>{{ $loop->iteration }} - {{ $category->name }}</strong></h6>
-                        </div>
-
-                        <!-- Questions for this category -->
-                        @foreach($category->questions as $question)
-                            <div class="col-md-6 mt-0">
-                                <label class="form-label">{{ $question->text }}</label>
-
-                                @if($question->options)
-                                    @foreach(json_decode($question->options) as $option)
-                                        <div class="form-check">
-                                            <input class="form-check-input"
-                                                type="radio"
-                                                name="questions[{{ $question->id }}]"
-                                                value="{{ $option }}"
-                                                id="q{{ $question->id }}_{{ $loop->index }}"
-                                                required>
-                                            <label class="form-check-label"
-                                                for="q{{ $question->id }}_{{ $loop->index }}">
-                                                {{ $option }}
-                                            </label>
-                                        </div>
-                                    @endforeach
-                                @else
-                                    <textarea class="form-control"
-                                            name="questions[{{ $question->id }}]"
-                                            rows="3"
-                                            required></textarea>
-                                @endif
+                    <div class="row gy-3 mt-0">
+                        @foreach($categories as $category)
+                            <!-- Category Header -->
+                            <div class="col-12">
+                                <h6><strong>{{ $loop->iteration }} - {{ $category->name }}</strong></h6>
                             </div>
-                        @endforeach
-                    @endforeach
-                </div>
-                </div>
 
+                            <!-- Questions for this category -->
+                            @foreach($category->questions as $question)
+                                <div class="col-md-6 mt-0">
+                                    <label class="form-label">{{ $question->text }}</label>
+
+                                    @if($question->options)
+                                        @foreach(json_decode($question->options) as $option)
+                                            <div class="form-check">
+                                                <input class="form-check-input"
+                                                    type="radio"
+                                                    name="questions[{{ $question->id }}]"
+                                                    value="{{ $option }}"
+                                                    id="q{{ $question->id }}_{{ $loop->index }}"
+                                                    required>
+                                                <label class="form-check-label"
+                                                    for="q{{ $question->id }}_{{ $loop->index }}">
+                                                    {{ $option }}
+                                                </label>
+                                            </div>
+                                        @endforeach
+                                    @else
+                                        <textarea class="form-control"
+                                                name="questions[{{ $question->id }}]"
+                                                rows="3"
+                                                required></textarea>
+                                    @endif
+                                </div>
+                            @endforeach
+                        @endforeach
+                    </div>
+                </div>
             </div>
         </div>
 

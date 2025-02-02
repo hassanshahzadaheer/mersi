@@ -3,17 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\SurveyBusinessProfile;
-use App\Models\SurveyQuestionCategory;
 use App\Models\SurveyEvaluation;
+use App\Models\SurveyQuestionCategory;
+use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 
 class Survey extends Controller
 {
     public function index()
     {
-        return view('survey.index');
+        $surveys = SurveyBusinessProfile::with(['evaluations.question.category'])
+            ->latest()
+            ->paginate(2);
+
+        return view('survey.index', compact('surveys'));
     }
 
     public function store(Request $request)
@@ -55,7 +59,7 @@ class Survey extends Controller
 
             return redirect()->back()->with('success', 'Survey saved successfully!');
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             return redirect()->back()
                 ->with('error', 'Failed to save survey. Please try again.')
