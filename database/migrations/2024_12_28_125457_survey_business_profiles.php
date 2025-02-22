@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->bigIncrements('id');
             $table->string('company_name');
             $table->string('company_website')->nullable();
+            $table->string('contact_person')->nullable();
             $table->string('company_phone_number')->nullable();
             $table->string('company_industry');
             $table->enum('service_request_type', [
@@ -24,6 +25,7 @@ return new class extends Migration {
                 'CMMI for Development (DEV)',
                 'Other'
             ]);
+
             $table->timestamps();
         });
     }

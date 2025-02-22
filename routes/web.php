@@ -27,6 +27,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/survey/create', [Survey::class, 'create'])->name('survey.create');
     Route::post('/survey/store', [Survey::class, 'store'])->name('survey.store');
 
+//    Evaluation
+    Route::get('/survey/evaluation/', [Survey::class, 'evaluation'])->name('survey.evaluation');
+    Route::get('/survey/evaluation/{businessId}',
+        [Survey::class, 'evaluateSurvey'])->name('survey.business.evaluation');
+
 });
 
 require __DIR__.'/auth.php';

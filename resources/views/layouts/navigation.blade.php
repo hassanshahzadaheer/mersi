@@ -113,9 +113,8 @@
             </x-nav-link>
         </li>
 
-        <li class="menu-item ">
-            <x-nav-link>
-
+        <li class="menu-item {{ request()->routeIs('survey.evaluation') ? 'active' : '' }}">
+            <x-nav-link :href="route('survey.evaluation')">
                 <i class="menu-icon tf-icons bx bx-check-circle"></i>
                 <div data-i18n="Analytics">Evaluation</div>
             </x-nav-link>

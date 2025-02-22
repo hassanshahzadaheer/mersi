@@ -14,18 +14,18 @@ class SurveyQuestionsSeeder extends Seeder
     public function run(): void
     {
         $questions = [
-//            [
-//                'category_id' => 1, // Organizational Purpose
-//                'text' => "What is your organization’s mission or purpose?",
-//                'options' => json_encode([
-//                    "Focused on delivering the best products/services",
-//                    "Focused on core values beyond products/services",
-//                    "Aims to positively impact our ecosystem (vendors, partners, employees)",
-//                    "Focused on delivering global significance and transformational change"
-//                ]),
-//                'created_at' => Carbon::now(),
-//                'updated_at' => Carbon::now(),
-//            ],
+            [
+                'category_id' => 1, // Organizational Purpose
+                'text' => "What is your organization’s mission or purpose?",
+                'options' => json_encode([
+                    "Focused on delivering the best products/services",
+                    "Focused on core values beyond products/services",
+                    "Aims to positively impact our ecosystem (vendors, partners, employees)",
+                    "Focused on delivering global significance and transformational change"
+                ]),
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
 
             // Category 2: Human Resources and Contracts Operations
             [

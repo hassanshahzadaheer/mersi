@@ -17,4 +17,6 @@ class SurveyEvaluation extends Model
     {
         return $this->belongsTo(SurveyBusinessProfile::class, 'business_profile_id');
     }
+
+
 }
