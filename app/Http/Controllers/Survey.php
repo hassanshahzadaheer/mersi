@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AuditReport;
 use App\Models\SurveyBusinessProfile;
 use App\Models\SurveyEvaluation;
 use App\Models\SurveyQuestionCategory;
@@ -178,6 +179,33 @@ class Survey extends Controller
             ];
         }
 
+        // Group compliance scores by standard
+        $complianceBreakdown = [];
+        foreach ($evaluationData as $data) {
+            $standard = $data['standard'];
+
+            if (!isset($complianceBreakdown[$standard])) {
+                $complianceBreakdown[$standard] = [
+                    'name' => $standard,
+                    'totalScore' => 0,
+                    'maxScore' => 0
+                ];
+            }
+
+            $complianceBreakdown[$standard]['totalScore'] += $data['score'];
+            $complianceBreakdown[$standard]['maxScore'] += 2; // Each question max score is 2
+        }
+
+// Convert breakdown to percentages
+        foreach ($complianceBreakdown as $key => $breakdown) {
+            $complianceBreakdown[$key]['percentage'] = ($breakdown['maxScore'] > 0)
+                ? number_format(($breakdown['totalScore'] / $breakdown['maxScore']) * 100, 2)
+                : 0;
+        }
+
+// Convert associative array to indexed array for Blade compatibility
+        $complianceBreakdown = array_values($complianceBreakdown);
+
         // Calculate overall compliance percentage
         $compliancePercentage = $maxScore > 0 ? ($totalScore / $maxScore) * 100 : 0;
 
@@ -186,5 +214,67 @@ class Survey extends Controller
             compact('businessProfile', 'evaluationData', 'totalScore', 'compliancePercentage'));
     }
 
+
+    public function generateAuditReport($businessId)
+    {
+        // Fetch survey evaluations for the given business
+        $evaluations = SurveyEvaluation::where('business_profile_id', $businessId)->get();
+
+        if ($evaluations->isEmpty()) {
+            return response()->json(['message' => 'No evaluations found for this business.'], 404);
+        }
+
+        // Calculate compliance score (example: average of responses)
+        $complianceScore = $evaluations->avg('response') ?? 0;
+
+        // Determine audit report type based on existing records
+        $reportType = $this->getReportType($businessId);
+
+        // Define the file path (this would be dynamically generated later)
+        $filePath = "reports/{$reportType}_{$businessId}.pdf";
+
+        // Store or update the audit report
+        $report = AuditReport::updateOrCreate(
+            [
+                'business_profile_id' => $businessId,
+                'type' => $reportType,
+            ],
+            [
+                'file_path' => $filePath,
+                'status' => 'pending',
+            ]
+        );
+
+        return response()->json([
+            'message' => 'Audit report generated successfully!',
+            'report' => $report
+        ]);
+    }
+
+    private function getReportType($businessId)
+    {
+        $existingReports = AuditReport::where('business_profile_id', $businessId)->pluck('type')->toArray();
+
+        if (!in_array('preliminary', $existingReports)) {
+            return 'preliminary';
+        } elseif (!in_array('final', $existingReports)) {
+            return 'final';
+        } else {
+            return 'executive_summary';
+        }
+    }
+
+
+    public function viewAuditReport($businessId)
+    {
+        $reports = AuditReport::with('businessProfile')->where('business_profile_id', $businessId)->get();
+        return view('report.index', compact('businessId', 'reports'));
+    }
+
+    public function downloadSurveyReport($businessId)
+    {
+        $report = AuditReport::where('business_profile_id', $businessId)->firstOrFail();
+        return response()->file(public_path($report->file_path));
+    }
 
 }

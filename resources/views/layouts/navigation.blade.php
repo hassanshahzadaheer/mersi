@@ -113,8 +113,8 @@
             </x-nav-link>
         </li>
 
-        <li class="menu-item {{ request()->routeIs('survey.evaluation') ? 'active' : '' }}">
-            <x-nav-link :href="route('survey.evaluation')">
+        <li class="menu-item {{ request()->routeIs('survey.business.evaluation') ? 'active' : '' }}">
+            <x-nav-link>
                 <i class="menu-icon tf-icons bx bx-check-circle"></i>
                 <div data-i18n="Analytics">Evaluation</div>
             </x-nav-link>
@@ -123,24 +123,13 @@
         <!-- Misc -->
         <li class="menu-header small text-uppercase"><span class="menu-header-text">Reporting</span></li>
 
-        <li class="menu-item">
-            <a
-                href="https://themeselection.com/demo/sneat-bootstrap-html-admin-template/documentation/"
-                target="_blank"
-                class="menu-link"
-            >
-                <i class="menu-icon tf-icons bx bx-file"></i>
-                <div data-i18n="Documentation">Documentation</div>
-            </a>
-        </li>
-
-        <li class="menu-item ">
-            <x-nav-link>
-
+        <li class="menu-item {{ request()->routeIs('survey.audit.view') ? 'active' : '' }}">
+            <x-nav-link href="{{ route('survey.audit.view', ['businessId' => 1]) }}">
                 <i class="menu-icon tf-icons bx bx-repost"></i>
                 <div data-i18n="Analytics">Audit Reports</div>
             </x-nav-link>
         </li>
+
     </ul>
 </aside>
 <!-- / Menu -->

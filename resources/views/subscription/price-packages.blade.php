@@ -42,14 +42,23 @@
                             </ul>
                         </div>
                     </template>
-                    <x-nav-link :href="route('subscription.payment')">
+                    <form action="{{ route('subscription.subscribe') }}" method="POST" x-data>
+                        @csrf
+                        <input type="hidden" name="plan_name" value="basic">
+                        <input type="hidden" name="duration" :value="duration">
+
+                        <template x-if="duration === '1_year'">
+                            <input type="hidden" name="price" value="{{ $plans['1_year']['basic']['price'] }}">
+                        </template>
+                        <template x-if="duration === '2_year'">
+                            <input type="hidden" name="price" value="{{ $plans['2_year']['basic']['price'] }}">
+                        </template>
 
                         <x-primary-button class="btn btn-primary d-grid w-100">
-
                             <div data-i18n="Analytics">Subscribe Now</div>
-
                         </x-primary-button>
-                    </x-nav-link>
+                    </form>
+
                 </div>
             </div>
         </div>
@@ -83,14 +92,23 @@
                             </ul>
                         </div>
                     </template>
-                    <x-nav-link :href="route('subscription.payment')">
+                    <form action="{{ route('subscription.subscribe') }}" method="POST" x-data>
+                        @csrf
+                        <input type="hidden" name="plan_name" value="platinum">
+                        <input type="hidden" name="duration" :value="duration">
+
+                        <template x-if="duration === '1_year'">
+                            <input type="hidden" name="price" value="{{ $plans['1_year']['platinum']['price'] }}">
+                        </template>
+                        <template x-if="duration === '2_year'">
+                            <input type="hidden" name="price" value="{{ $plans['2_year']['platinum']['price'] }}">
+                        </template>
 
                         <x-primary-button class="btn btn-primary d-grid w-100">
-
                             <div data-i18n="Analytics">Subscribe Now</div>
-
                         </x-primary-button>
-                    </x-nav-link>
+                    </form>
+
                 </div>
             </div>
         </div>

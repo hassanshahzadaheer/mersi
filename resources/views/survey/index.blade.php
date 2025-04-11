@@ -8,6 +8,7 @@
     </x-slot>
 
     <div class="col-12 mb-4">
+
         <div class="card">
             <div class="card-body justify-content-between align-items-center">
                 <div class="table-responsive text-nowrap">
@@ -45,8 +46,12 @@
                                             <button class="dropdown-item" data-bs-toggle="modal"
                                                     data-bs-target="#surveyModal{{ $survey->id }}">
                                                 <i
-                                                    class="icon-base bx bx-trash me-1"></i> Details
+                                                    class="icon-base bx bx bx-detail me-1"></i> Details
                                             </button>
+                                             <a class="dropdown-item" href="{{ route('survey.business.evaluation', ['businessId' => $survey->id]) }}">
+    <i class="icon-base bx bx-check-square me-1"></i> Evaluate
+</a>
+
                                         </div>
                                     </div>
 
@@ -69,7 +74,7 @@
                                             @foreach($survey->evaluations as $evaluation)
 
                                                 <strong> {{ $evaluation->question->text }}: </strong>
-                                                
+
                                                 <p class="text-gray-600 dark:text-gray-400 mb-3">
                                                     {{ $evaluation->response }}
                                                 </p>

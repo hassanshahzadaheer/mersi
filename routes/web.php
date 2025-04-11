@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StripeController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\Survey;
 use Illuminate\Support\Facades\Route;
@@ -19,6 +20,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
 //    price module
+    Route::post('/subscribe', [StripeController::class, 'checkout'])->name('subscription.subscribe');
+    Route::get('/subscribe/success', [StripeController::class, 'success'])->name('stripe.success');
+
     Route::get('/price-plan', [SubscriptionController::class, 'index'])->name('subscription.index');
     Route::get('/price-plan/payment', [SubscriptionController::class, 'payments'])->name('subscription.payment');
 
@@ -31,6 +35,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/survey/evaluation/', [Survey::class, 'evaluation'])->name('survey.evaluation');
     Route::get('/survey/evaluation/{businessId}',
         [Survey::class, 'evaluateSurvey'])->name('survey.business.evaluation');
+
+    // reporting
+    Route::get('/survey/report', [Survey::class, 'report'])->name('survey.report');
+
+    Route::post('/audit/generate/{businessId}',
+        [Survey::class, 'generateAuditReport'])->name('survey.audit.generate');
+    Route::get('/survey/view/{businessId}', [Survey::class, 'viewAuditReport'])->name('survey.audit.view');
+    Route::get('/survey/{businessId}/download', [Survey::class, 'downloadSurveyReport'])
+        ->name('survey.report.download');
 
 });
 
