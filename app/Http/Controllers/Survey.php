@@ -6,9 +6,11 @@ use App\Models\AuditReport;
 use App\Models\SurveyBusinessProfile;
 use App\Models\SurveyEvaluation;
 use App\Models\SurveyQuestionCategory;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Log;
 
 class Survey extends Controller
@@ -217,32 +219,112 @@ class Survey extends Controller
 
     public function generateAuditReport($businessId)
     {
-        // Fetch survey evaluations for the given business
-        $evaluations = SurveyEvaluation::where('business_profile_id', $businessId)->get();
+        $businessProfile = SurveyBusinessProfile::findOrFail($businessId);
 
-        if ($evaluations->isEmpty()) {
+        $responses = SurveyEvaluation::where('business_profile_id', $businessId)
+            ->with(['question.category', 'businessProfile'])
+            ->get();
+
+        if ($responses->isEmpty()) {
             return response()->json(['message' => 'No evaluations found for this business.'], 404);
         }
 
-        // Calculate compliance score (example: average of responses)
-        $complianceScore = $evaluations->avg('response') ?? 0;
-
-        // Determine audit report type based on existing records
-        $reportType = $this->getReportType($businessId);
-
-        // Define the file path (this would be dynamically generated later)
-        $filePath = "reports/{$reportType}_{$businessId}.pdf";
-
-        // Store or update the audit report
-        $report = AuditReport::updateOrCreate(
-            [
-                'business_profile_id' => $businessId,
-                'type' => $reportType,
+        // Compliance mapping
+        $complianceRules = [
+            "We don’t use data analysis" => [
+                "standard" => "CMMI DEV (Process Optimization)", "status" => "Non-Compliant", "score" => 0
             ],
-            [
-                'file_path' => $filePath,
-                'status' => 'pending',
-            ]
+            "OKRs are used with full transparency" => [
+                "standard" => "ISO 9001 (Quality & Objectives)", "status" => "Compliant", "score" => 2
+            ],
+            "We use data sometimes" => [
+                "standard" => "CMMI DEV (Process Optimization)", "status" => "Partially Compliant", "score" => 1
+            ],
+            "No data sharing" => ["standard" => "ISO 9001 (Data Control)", "status" => "Non-Compliant", "score" => 0],
+            "Some processes are scalable outside the organization (e.g., franchises)" => [
+                "standard" => "ISO 9001 (Scalability)", "status" => "Compliant", "score" => 2
+            ],
+            "Traditional metrics (e.g., sales, profit)" => [
+                "standard" => "ISO 9001 (Performance Tracking)", "status" => "Partially Compliant", "score" => 1
+            ],
+            "Risk-taking and failure are embraced and celebrated" => [
+                "standard" => "ISO 9001 (Continuous Improvement)", "status" => "Compliant", "score" => 2
+            ],
+            "Decentralized decisions in customer-facing areas" => [
+                "standard" => "CMMI SVC (Service Delivery)", "status" => "Partially Compliant", "score" => 1
+            ],
+            "Some teams use social tools (e.g., Slack, Teams)" => [
+                "standard" => "ISO 9001 (Communication)", "status" => "Partially Compliant", "score" => 1
+            ],
+        ];
+
+        $evaluationData = [];
+        $totalScore = 0;
+        $maxScore = count($responses) * 2;
+
+        foreach ($responses as $response) {
+            $questionText = $response->question->text ?? "Unknown Question";
+            $responseText = $response->response ?? "No response";
+            $categoryName = $response->question->category->name ?? 'Uncategorized';
+
+            $complianceData = $complianceRules[$responseText] ?? [
+                "standard" => "N/A", "status" => "Partially Compliant", "score" => 1
+            ];
+
+            $totalScore += $complianceData['score'];
+
+            $evaluationData[] = [
+                "question" => $questionText,
+                "response" => $responseText,
+                "category" => $categoryName,
+                "standard" => $complianceData["standard"],
+                "status" => $complianceData["status"],
+                "score" => $complianceData["score"]
+            ];
+        }
+
+        // Compliance Breakdown
+        $complianceBreakdown = [];
+        foreach ($evaluationData as $data) {
+            $standard = $data['standard'];
+
+            if (!isset($complianceBreakdown[$standard])) {
+                $complianceBreakdown[$standard] = [
+                    'name' => $standard,
+                    'totalScore' => 0,
+                    'maxScore' => 0
+                ];
+            }
+
+            $complianceBreakdown[$standard]['totalScore'] += $data['score'];
+            $complianceBreakdown[$standard]['maxScore'] += 2;
+        }
+
+        foreach ($complianceBreakdown as $key => $breakdown) {
+            $complianceBreakdown[$key]['percentage'] = $breakdown['maxScore'] > 0
+                ? number_format(($breakdown['totalScore'] / $breakdown['maxScore']) * 100, 2)
+                : 0;
+        }
+
+        $evaluationResults = [
+            'totalScore' => $totalScore,
+            'compliancePercentage' => $maxScore > 0 ? ($totalScore / $maxScore) * 100 : 0,
+            'evaluationData' => collect($evaluationData),
+            'complianceBreakdown' => array_values($complianceBreakdown),
+        ];
+
+
+        // Generate and store PDF
+        $reportType = $this->getReportType($businessId);
+        $fileName = "{$reportType}_report_{$businessId}.pdf";
+        $relativePath = "reports/{$fileName}";
+
+        $pdf = PDF::loadView('report.survey-report', compact('businessProfile', 'responses', 'evaluationResults'));
+        Storage::put($relativePath, $pdf->output());
+
+        $report = AuditReport::updateOrCreate(
+            ['business_profile_id' => $businessId, 'type' => $reportType],
+            ['file_path' => $relativePath, 'status' => 'pending']
         );
 
         return response()->json([
@@ -250,6 +332,7 @@ class Survey extends Controller
             'report' => $report
         ]);
     }
+
 
     private function getReportType($businessId)
     {
@@ -276,5 +359,6 @@ class Survey extends Controller
         $report = AuditReport::where('business_profile_id', $businessId)->firstOrFail();
         return response()->file(public_path($report->file_path));
     }
+
 
 }
