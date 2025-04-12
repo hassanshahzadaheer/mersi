@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Subscription;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Illuminate\support\Facades\Auth;
 
 
@@ -54,7 +53,6 @@ class SubscriptionController extends Controller
     {
         $user = Auth::user();
 
-        // Determine the price based on duration and plan
         $plans = [
             '1_year' => [
                 'basic' => 1000,
@@ -77,18 +75,42 @@ class SubscriptionController extends Controller
         $now = Carbon::now();
         $expire = $duration === '1_year' ? $now->copy()->addYear() : $now->copy()->addYears(2);
 
-        // Create the subscription
-        Subscription::create([
-            'user_id' => $user->id,
+        session([
             'plan_name' => $planName,
-            'status' => 'active',
             'price' => $price,
-            'currency' => 'USD',
-            'renewal_date' => null,
-            'expire_date' => $expire,
+            'duration' => $duration,
         ]);
 
         return redirect()->route('subscription.payment')->with('success', 'Subscription successful!');
     }
 
+
+    public function success(Request $request)
+    {
+        $user = Auth::user();
+
+        $planName = session('plan_name', 'basic');
+        $price = session('price', 1000);
+        $duration = session('duration', '1_year');
+
+        $subscription = new Subscription();
+        $subscription->user_id = $user->id;
+        $subscription->plan_name = $planName;
+        $subscription->price = $price;
+        $subscription->currency = 'USD';
+        $subscription->status = 'active';
+
+        if ($duration === '2_year') {
+            $subscription->renewal_date = now()->addYears(2);
+            $subscription->expire_date = now()->addYears(2);
+        } else {
+            $subscription->renewal_date = now()->addYear();
+            $subscription->expire_date = now()->addYear();
+        }
+
+
+        $subscription->save();
+
+        return view('subscription.success');
+    }
 }

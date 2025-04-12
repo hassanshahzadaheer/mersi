@@ -25,6 +25,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/price-plan', [SubscriptionController::class, 'index'])->name('subscription.index');
     Route::get('/price-plan/payment', [SubscriptionController::class, 'payments'])->name('subscription.payment');
+    Route::get('/payment-success', [SubscriptionController::class, 'success'])->name('payment.success');
+
 
 //    survey module
     Route::get('/survey', [Survey::class, 'index'])->name('survey.index');

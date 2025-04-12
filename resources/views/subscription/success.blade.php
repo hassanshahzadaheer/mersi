@@ -11,3 +11,4 @@
         <a href="{{ route('dashboard') }}" class="btn btn-primary mt-4">Go to Dashboard</a>
     </div>
 </x-app-layout>
+

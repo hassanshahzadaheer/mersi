@@ -12,8 +12,8 @@ class StripeController extends Controller
     public function checkout(Request $request)
     {
 
-        $key = Stripe::setApiKey(config('services.stripe.secret'));
-        
+        Stripe::setApiKey(config('services.stripe.secret'));
+
         // Get request data
         $planName = $request->plan_name;
         $duration = $request->duration;
@@ -35,7 +35,7 @@ class StripeController extends Controller
                 ]
             ],
             'mode' => 'payment',
-            'success_url' => route('stripe.success').'?session_id={CHECKOUT_SESSION_ID}',
+            'success_url' => route('payment.success').'?session_id={CHECKOUT_SESSION_ID}',
             'cancel_url' => route('subscription.index'),
             'metadata' => [
                 'user_id' => Auth::id(),
@@ -46,6 +46,7 @@ class StripeController extends Controller
         ]);
 
         return redirect($session->url);
+
     }
 
     public function success(Request $request)
