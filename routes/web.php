@@ -42,7 +42,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/survey/report', [Survey::class, 'report'])->name('survey.report');
 
     Route::get('/audit/generate/{businessId}', [Survey::class, 'generateAuditReport'])->name('survey.audit.generate');
-    Route::get('/survey/view/{businessId}', [Survey::class, 'viewAuditReport'])->name('survey.audit.view');
+    Route::get('/survey/view/{businessId}', [Survey::class, 'showSurveyReports'])->name('survey.audit.view');
     Route::get('/survey/{businessId}/download', [Survey::class, 'downloadSurveyReport'])
         ->name('survey.report.download');
 

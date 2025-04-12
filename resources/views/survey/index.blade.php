@@ -8,6 +8,31 @@
     </x-slot>
 
     <div class="col-12 mb-4">
+        @if (session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+        @if ($errors->any())
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>There were some problems:</strong>
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
 
         <div class="card">
             <div class="card-body justify-content-between align-items-center">
@@ -37,25 +62,32 @@
                                         {{ $survey->company_website }}
                                     </a>
                                 </td>
-                                <td class="px-4 py-3">
-                                    <div class="dropdown">
-                                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow"
-                                                data-bs-toggle="dropdown">
-                                            <i class="icon-base bx bx-dots-vertical-rounded"></i></button>
-                                        <div class="dropdown-menu">
-                                            <button class="dropdown-item" data-bs-toggle="modal"
-                                                    data-bs-target="#surveyModal{{ $survey->id }}">
-                                                <i
-                                                    class="icon-base bx bx bx-detail me-1"></i> Details
-                                            </button>
-                                             <a class="dropdown-item" href="{{ route('survey.business.evaluation', ['businessId' => $survey->id]) }}">
-    <i class="icon-base bx bx-check-square me-1"></i> Evaluate
-</a>
 
-                                        </div>
-                                    </div>
+                                <td class="px-4 py-3">
+                                    <button type="button"
+                                            class="btn btn-sm btn-icon rounded-pill btn-outline-primary me-2"
+                                            title="View Details"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#surveyModal{{ $survey->id }}">
+                                        <span class="tf-icons bx bx-show bx-18px"></span>
+                                    </button>
+                                    <a type="button" class="btn btn-sm btn-icon rounded-pill btn-outline-dark me-2"
+                                       href="{{ route('survey.business.evaluation', ['businessId' => $survey->id]) }}"
+                                       data-bs-toggle="tooltip" data-bs-placement="top" title="Open Evaluation">
+                                        <span class="tf-icons bx bx-analyse bx-18px"></span>
+                                    </a>
+                                    <a href="{{ route('survey.audit.generate', $survey->id) }}"
+                                       class="btn btn-sm btn-icon rounded-pill btn-outline-secondary"
+                                       data-bs-toggle="tooltip"
+                                       data-bs-placement="top"
+                                       title="Generate Report">
+                                        <span class="tf-icons bx bx-file bx-18px"></span>
+                                    </a>
+
 
                                 </td>
+
+
                             </tr>
 
                             <!-- Bootstrap Modal (Hidden by Default) -->

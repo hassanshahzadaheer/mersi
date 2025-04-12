@@ -80,7 +80,6 @@
         <li class="menu-header small text-uppercase">
             <span class="menu-header-text">Subscription</span>
         </li>
-
         <li class="menu-item {{ request()->routeIs('subscription.index')  ? 'active' : '' }}">
             <x-nav-link :href="route('subscription.index')">
                 <i class="menu-icon tf-icons bx bx-credit-card"></i>

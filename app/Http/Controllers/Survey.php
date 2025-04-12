@@ -10,8 +10,8 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Log;
 
 class Survey extends Controller
 {
@@ -226,7 +226,8 @@ class Survey extends Controller
             ->get();
 
         if ($responses->isEmpty()) {
-            return response()->json(['message' => 'No evaluations found for this business.'], 404);
+            return redirect()->back()->with('error', 'No evaluations found for this business.');
+
         }
 
         // Compliance mapping
@@ -327,10 +328,7 @@ class Survey extends Controller
             ['file_path' => $relativePath, 'status' => 'pending']
         );
 
-        return response()->json([
-            'message' => 'Audit report generated successfully!',
-            'report' => $report
-        ]);
+        return redirect()->back()->with('success', 'Survey report generated successfully!');
     }
 
 
@@ -348,16 +346,39 @@ class Survey extends Controller
     }
 
 
-    public function viewAuditReport($businessId)
+    public function showSurveyReports($businessId)
     {
         $reports = AuditReport::with('businessProfile')->where('business_profile_id', $businessId)->get();
         return view('report.index', compact('businessId', 'reports'));
     }
 
+
     public function downloadSurveyReport($businessId)
     {
-        $report = AuditReport::where('business_profile_id', $businessId)->firstOrFail();
-        return response()->file(public_path($report->file_path));
+        try {
+
+            $report = AuditReport::where('business_profile_id', $businessId)->first();
+
+            if (!$report) {
+                return redirect()->back()->with('error', 'Report not found for this business.');
+            }
+
+            $filePath = $report->file_path;
+            
+//            if (!Storage::disk('local')->exists("/private/{$filePath}")) {
+//                return redirect()->back()->with('error', 'Report file does not exist on the server.');
+//            }
+//
+
+            return response()->download(
+                storage_path("app/private/{$filePath}"),
+                basename($filePath)
+            );
+
+        } catch (Exception $e) {
+            Log::error("Download error for business ID {$businessId}: ".$e->getMessage());
+            return redirect()->back()->with('error', 'An unexpected error occurred while downloading the report.');
+        }
     }
 
 

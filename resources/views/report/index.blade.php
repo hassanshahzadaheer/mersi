@@ -7,7 +7,22 @@
         </div>
     </x-slot>
 
+
     <div class="container mx-auto p-6">
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-lg font-semibold">Audit Reports</h2>
             <div class="flex space-x-2">
@@ -26,6 +41,8 @@
                     <th class="py-2 px-4 text-left">Industry</th>
                     <th class="py-2 px-4 text-left">Type</th>
                     <th class="py-2 px-4 text-left">Status</th>
+                    <th class="py-2 px-4 text-left">File</th>
+
                     <th class="py-2 px-4 text-left">Created At</th>
                     <th class="py-2 px-4 text-left">Actions</th>
                 </tr>
@@ -38,13 +55,13 @@
                         <td class="py-2 px-4">{{ $report->businessProfile->company_industry ?? 'N/A' }}</td>
                         <td class="py-2 px-4">{{ ucfirst($report->type) }}</td>
                         <td class="py-2 px-4">{{ ucfirst($report->status) }}</td>
+                        <td class="py-2 px-4">{{ ucfirst($report->file_path) }}</td>
                         <td class="py-2 px-4">{{ $report->created_at->format('Y-m-d') }}</td>
                         <td class="py-2 px-4">
-                            <a href="{{ route('survey.audit.view', ['businessId' => $report->business_profile_id]) }}"
-                               class="text-blue-600">View</a>
-                            <a href="{{ route('survey.report.download', ['businessId' => $report->business_profile_id]) }}"
-                               class="bg-blue-500 text-white px-4 py-2 rounded">
-                                Download PDF
+                            <a type="button" class="btn btn-sm btn-icon rounded-pill btn-outline-dark me-2"
+                               href="{{ route('survey.report.download', ['businessId' => $report->business_profile_id]) }}"
+                               data-bs-toggle="tooltip" data-bs-placement="top" title="Download Report">
+                                <span class="tf-icons bx bx-download bx-18px"></span>
                             </a>
 
                         </td>
