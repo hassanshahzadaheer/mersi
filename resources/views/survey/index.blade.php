@@ -48,81 +48,89 @@
                         </thead>
                         <tbody class="table-border-bottom-0">
 
-                        @foreach($surveys as $survey)
-                            <tr class="border-b border-gray-300 dark:border-gray-700">
-                                <td class="px-4 py-3 font-semibold text-gray-800 dark:text-gray-200">
-                                    {{ $survey->company_name }}
+                        @if($surveys->isEmpty())
+                            <tr>
+                                <td colspan="4" class="text-center py-4 text-gray-500 dark:text-gray-400">
+                                    No survey responses found.
                                 </td>
-                                <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
-                                    {{ $survey->company_industry }}
-                                </td>
-                                <td class="px-4 py-3">
-                                    <a href="{{ $survey->company_website }}" target="_blank"
-                                       class="text-blue-600 hover:underline">
-                                        {{ $survey->company_website }}
-                                    </a>
-                                </td>
-
-                                <td class="px-4 py-3">
-                                    <button type="button"
-                                            class="btn btn-sm btn-icon rounded-pill btn-outline-primary me-2"
-                                            title="View Details"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#surveyModal{{ $survey->id }}">
-                                        <span class="tf-icons bx bx-show bx-18px"></span>
-                                    </button>
-                                    <a type="button" class="btn btn-sm btn-icon rounded-pill btn-outline-dark me-2"
-                                       href="{{ route('survey.business.evaluation', ['businessId' => $survey->id]) }}"
-                                       data-bs-toggle="tooltip" data-bs-placement="top" title="Open Evaluation">
-                                        <span class="tf-icons bx bx-analyse bx-18px"></span>
-                                    </a>
-                                    <a href="{{ route('survey.audit.generate', $survey->id) }}"
-                                       class="btn btn-sm btn-icon rounded-pill btn-outline-secondary"
-                                       data-bs-toggle="tooltip"
-                                       data-bs-placement="top"
-                                       title="Generate Report">
-                                        <span class="tf-icons bx bx-file bx-18px"></span>
-                                    </a>
-
-
-                                </td>
-
-
                             </tr>
+                        @else
+                            @foreach($surveys as $survey)
+                                <tr class="border-b border-gray-300 dark:border-gray-700">
+                                    <td class="px-4 py-3 font-semibold text-gray-800 dark:text-gray-200">
+                                        {{ $survey->company_name }}
+                                    </td>
+                                    <td class="px-4 py-3 text-gray-700 dark:text-gray-300">
+                                        {{ $survey->company_industry }}
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <a href="{{ $survey->company_website }}" target="_blank"
+                                           class="text-blue-600 hover:underline">
+                                            {{ $survey->company_website }}
+                                        </a>
+                                    </td>
 
-                            <!-- Bootstrap Modal (Hidden by Default) -->
-                            <div class="modal fade" id="surveyModal{{ $survey->id }}" tabindex="-1"
-                                 aria-labelledby="surveyModalLabel{{ $survey->id }}" aria-hidden="true">
-                                <div class="modal-dialog modal-lg">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="surveyModalLabel{{ $survey->id }}">
-                                                Survey Details - {{ $survey->company_name }}
-                                            </h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            @foreach($survey->evaluations as $evaluation)
+                                    <td class="px-4 py-3">
+                                        <button type="button"
+                                                class="btn btn-sm btn-icon rounded-pill btn-outline-primary me-2"
+                                                title="View Details"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#surveyModal{{ $survey->id }}">
+                                            <span class="tf-icons bx bx-show bx-18px"></span>
+                                        </button>
+                                        <a type="button" class="btn btn-sm btn-icon rounded-pill btn-outline-dark me-2"
+                                           href="{{ route('survey.business.evaluation', ['businessId' => $survey->id]) }}"
+                                           data-bs-toggle="tooltip" data-bs-placement="top" title="Open Evaluation">
+                                            <span class="tf-icons bx bx-analyse bx-18px"></span>
+                                        </a>
+                                        <a href="{{ route('survey.audit.generate', $survey->id) }}"
+                                           class="btn btn-sm btn-icon rounded-pill btn-outline-secondary"
+                                           data-bs-toggle="tooltip"
+                                           data-bs-placement="top"
+                                           title="Generate Report">
+                                            <span class="tf-icons bx bx-file bx-18px"></span>
+                                        </a>
 
-                                                <strong> {{ $evaluation->question->text }}: </strong>
 
-                                                <p class="text-gray-600 dark:text-gray-400 mb-3">
-                                                    {{ $evaluation->response }}
-                                                </p>
-                                            @endforeach
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                                Close
-                                            </button>
+                                    </td>
+
+
+                                </tr>
+
+                                <!-- Bootstrap Modal (Hidden by Default) -->
+                                <div class="modal fade" id="surveyModal{{ $survey->id }}" tabindex="-1"
+                                     aria-labelledby="surveyModalLabel{{ $survey->id }}" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="surveyModalLabel{{ $survey->id }}">
+                                                    Survey Details - {{ $survey->company_name }}
+                                                </h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                @foreach($survey->evaluations as $evaluation)
+
+                                                    <strong> {{ $evaluation->question->text }}: </strong>
+
+                                                    <p class="text-gray-600 dark:text-gray-400 mb-3">
+                                                        {{ $evaluation->response }}
+                                                    </p>
+                                                @endforeach
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                    Close
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
 
-                        @endforeach
+                            @endforeach
 
+                        @endif
 
                         </tbody>
                     </table>

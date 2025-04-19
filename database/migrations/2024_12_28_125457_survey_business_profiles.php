@@ -12,6 +12,11 @@ return new class extends Migration {
     {
         Schema::create('survey_business_profiles', function (Blueprint $table) {
             $table->bigIncrements('id');
+
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+
+
             $table->string('company_name');
             $table->string('company_website')->nullable();
             $table->string('contact_person')->nullable();
@@ -19,14 +24,19 @@ return new class extends Migration {
             $table->string('company_industry');
             $table->enum('service_request_type', [
                 'Process/Operations Optimization',
-                'Project Management',
-                'ISO 9001: 2015',
+                'Quality Assurance & Compliance',
+                'Project Management Excellence',
                 'CMMI for Service (SVC)',
                 'CMMI for Development (DEV)',
+                'ISO 9001: 2015 Quality Management System',
+                'ISO 27001 Information Security Management System',
+                'ISO 20000-1 IT Service Management System',
+                'ISO 45001 Occupational Health and Safety',
                 'Other'
             ]);
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

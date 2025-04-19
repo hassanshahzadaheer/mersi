@@ -8,6 +8,10 @@
         <div class="alert alert-success">
             {{ session('success') }}
         </div>
+    @elseif(session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
     @endif
 
     <form action="{{ route('survey.store')  }}" method="POST">
@@ -59,16 +63,30 @@
                         </div>
 
                         <div class="col-md-4 fv-plugins-icon-container">
-                            <label class="form-label" for="service_request">{{ __('Service Request Type') }}</label>
-                            <select id="service_request" name="service_request" class="form-control" required>
+                            <label class="form-label"
+                                   for="service_request_type">{{ __('Service Request Type') }}</label>
+                            <select id="service_request_type" name="service_request_type" class="form-control" required>
                                 <option value="">{{ __('Select service request type') }}</option>
-                                <option
-                                    value="operations-optimization">{{ __(' Process/Operations Optimization') }}</option>
-                                <option value="project-management">{{ __('Project Management') }}</option>
-                                <option value="ISO-9001-2015">{{ __('ISO 9001: 2015') }}</option>
-                                <option value="CMMI-for-service">{{ __('CMMI for Service (SVC)') }}</option>
-                                <option value="CMMI-for-development">{{ __('CMMI for Development (DEV)') }}</option>
-                                <option value="other">{{ __('Other') }}</option>
+                                <option value="Process/Operations Optimization">Process/Operations Optimization</option>
+                                <option value="Quality Assurance & Compliance">Quality Assurance & Compliance</option>
+                                <option value="Project Management Excellence">Project Management Excellence</option>
+                                <option value="CMMI for Service (SVC)">CMMI for Service (SVC)</option>
+                                <option value="CMMI for Development (DEV)">CMMI for Development (DEV)</option>
+                                <option value="ISO 9001: 2015 Quality Management System">ISO 9001: 2015 Quality
+                                    Management System
+                                </option>
+                                <option value="ISO 27001 Information Security Management System">ISO 27001 Information
+                                    Security Management System
+                                </option>
+                                <option value="ISO 20000-1 IT Service Management System">ISO 20000-1 IT Service
+                                    Management System
+                                </option>
+                                <option value="ISO 45001 Occupational Health and Safety">ISO 45001 Occupational Health
+                                    and Safety
+                                </option>
+                                <option value="Other">Other</option>
+
+
                             </select>
                             <small
                                 class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback">@error('service_request'){{ $message }}@enderror</small>
@@ -101,25 +119,30 @@
                                     <label class="form-label">{{ $question->text }}</label>
 
                                     @if($question->options)
-                                        @foreach(json_decode($question->options) as $option)
-                                            <div class="form-check">
-                                                <input class="form-check-input"
-                                                    type="radio"
-                                                    name="questions[{{ $question->id }}]"
-                                                    value="{{ $option }}"
-                                                    id="q{{ $question->id }}_{{ $loop->index }}"
-                                                    required>
-                                                <label class="form-check-label"
-                                                    for="q{{ $question->id }}_{{ $loop->index }}">
-                                                    {{ $option }}
-                                                </label>
-                                            </div>
-                                        @endforeach
+                                        @if($question->options)
+                                            @foreach(json_decode($question->options) as $option)
+                                                @if(is_object($option) && isset($option->text) && isset($option->score))
+                                                    <div class="form-check">
+                                                        <input class="form-check-input"
+                                                               type="radio"
+                                                               name="questions[{{ $question->id }}]"
+                                                               value='@json(["text" => $option->text, "score" => $option->score])'
+                                                               id="q{{ $question->id }}_{{ $loop->index }}"
+                                                               required>
+                                                        <label class="form-check-label"
+                                                               for="q{{ $question->id }}_{{ $loop->index }}">
+                                                            {{ $option->text }}
+                                                        </label>
+                                                    </div>
+                                                @endif
+                                            @endforeach
+                                        @endif
+
                                     @else
                                         <textarea class="form-control"
-                                                name="questions[{{ $question->id }}]"
-                                                rows="3"
-                                                required></textarea>
+                                                  name="questions[{{ $question->id }}]"
+                                                  rows="3"
+                                                  required></textarea>
                                     @endif
                                 </div>
                             @endforeach
@@ -133,7 +156,8 @@
         <div class="col-12 mb-4">
             <div class="card">
                 <div class="card-body d-flex justify-content-between align-items-center">
-                    <p class="mb-0">You can save your progress to resume later or submit your responses to finalize the survey.</p>
+                    <p class="mb-0">You can save your progress to resume later or submit your responses to finalize the
+                        survey.</p>
                     <div>
                         <button type="submit" class="btn btn-secondary me-2" name="action" value="save">
                             Save Progress

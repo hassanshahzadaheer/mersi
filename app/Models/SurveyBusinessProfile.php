@@ -11,6 +11,7 @@ class SurveyBusinessProfile extends Model
 
     // Specify the fillable fields
     protected $fillable = [
+        'user_id',
         'company_name',
         'contact_person',
         'company_website',

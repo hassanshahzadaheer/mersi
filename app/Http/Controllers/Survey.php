@@ -18,6 +18,7 @@ class Survey extends Controller
     public function index()
     {
         $surveys = SurveyBusinessProfile::with(['evaluations.question.category'])
+            ->where('user_id', auth()->id())
             ->latest()
             ->paginate(5);
 
@@ -27,50 +28,43 @@ class Survey extends Controller
     public function store(Request $request)
     {
         try {
-            Log::info('Incoming request:', $request->all());
-
             DB::beginTransaction();
 
-            // Validate general information
             $validated = $request->validate([
                 'company_name' => 'required',
                 'contact_person' => 'required',
                 'company_website' => 'required',
                 'company_industry' => 'required',
-                'service_request' => 'required|in:operations-optimization,project-management,ISO-9001-2015,CMMI-for-service,CMMI-for-development,other',
+                'service_request_type' => 'required|in:Process/Operations Optimization,Quality Assurance & Compliance,Project Management Excellence,CMMI for Service (SVC),CMMI for Development (DEV),ISO 9001: 2015 Quality Management System,ISO 27001 Information Security Management System,ISO 20000-1 IT Service Management System,ISO 45001 Occupational Health and Safety,Other',
                 'questions' => 'required|array'
             ]);
 
-            Log::info('Validated Data:', $validated);
-
-            // Create business profile
-            Log::info('Attempting to create business profile', ['data' => $validated]);
-
             $businessProfile = SurveyBusinessProfile::create([
+                'user_id' => auth()->id(),
                 'company_name' => $validated['company_name'],
                 'contact_person' => $validated['contact_person'],
                 'company_website' => $validated['company_website'],
                 'company_industry' => $validated['company_industry'],
-                'service_request' => $validated['service_request'],
+                'service_request_type' => $validated['service_request_type'],
             ]);
 
-            Log::info('Business profile created successfully', ['id' => $businessProfile->id]);
+            collect($request->questions)->each(function ($response, $questionId) use ($businessProfile) {
+                $decoded = json_decode($response, true);
 
-            // Store survey responses
-            foreach ($request->questions as $questionId => $response) {
-                Log::info('Processing response', ['question_id' => $questionId, 'response' => $response]);
+                if (!is_array($decoded) || !isset($decoded['text'], $decoded['score'])) {
 
-                $evaluation = SurveyEvaluation::create([
+                    return;
+                }
+
+                SurveyEvaluation::create([
                     'business_profile_id' => $businessProfile->id,
                     'question_id' => $questionId,
-                    'response' => $response,
+                    'response' => $decoded['text'],
+                    'score' => $decoded['score'],
                 ]);
-
-                Log::info('Response saved', ['evaluation_id' => $evaluation->id]);
-            }
+            });
 
             DB::commit();
-            Log::info('Survey saved successfully!');
 
             return redirect()->back()->with('success', 'Survey saved successfully!');
 
@@ -364,7 +358,7 @@ class Survey extends Controller
             }
 
             $filePath = $report->file_path;
-            
+
 //            if (!Storage::disk('local')->exists("/private/{$filePath}")) {
 //                return redirect()->back()->with('error', 'Report file does not exist on the server.');
 //            }

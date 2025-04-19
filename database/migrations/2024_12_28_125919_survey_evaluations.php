@@ -15,9 +15,9 @@ return new class extends Migration {
             $table->unsignedBigInteger('business_profile_id');
             $table->unsignedBigInteger('question_id');
             $table->text('response');
+            $table->float('score', 1, 1)->default(0.0);
             $table->timestamps();
 
-            // Foreign key constraints
             $table->foreign('business_profile_id')
                 ->references('id')
                 ->on('survey_business_profiles')
