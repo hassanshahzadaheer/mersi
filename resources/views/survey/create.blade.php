@@ -1,149 +1,120 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="d-flex justify-content-between align-items-center px-3 mb-4">
-            <div>
-                <h2 class="h2 fw-bold text-dark m-0">
-                    Business Intake Survey
-                </h2>
-                <p class="text-muted small mt-1 mb-0">
-                    Complete this assessment to help us understand your organization better
-                </p>
-            </div>
+        <div class="flex justify-between items-center">
+            <div class="d-flex justify-content-between align-items-center px-3 mb-4">
+                <div>
+                    <h2 class="h2 fw-bold text-dark m-0">
+                        Business Intake Survey
+                    </h2>
+                    <p class="text-muted small mt-1 mb-0">
+                        Complete this assessment to help us understand your organization better.
+                    </p>
+                </div>
 
-            <!-- Right: Back to Dashboard Button -->
-            <div>
-                <a href="{{ route('survey.index') }}"
-                   class="btn btn-primary btn-sm">
-                    ️Back to Survey List
-                </a>
-            </div>
-        </div>
-    </x-slot>
-    @if(session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @elseif(session('error'))
-        <div class="alert alert-danger">
-            {{ session('error') }}
-        </div>
-    @endif
-
-    <form action="{{ route('survey.store')  }}" method="POST">
-        @csrf
-
-        <!-- General information -->
-        <div class="col-12 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <!-- General Information Section -->
-                    <div class="row gy-3 mt-0">
-
-                        <div class="col-12">
-                            <h6>{{ __('General Information') }}</h6>
-                            <hr class="mt-0">
-                        </div>
-
-                        <div class="col-md-4 fv-plugins-icon-container">
-                            <label class="form-label" for="company_name">{{ __('Company Name') }}</label>
-                            <input id="company_name" name="company_name" type="text" class="form-control"
-                                   placeholder="Enter company name" required/>
-                            <small
-                                class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback">@error('company_name'){{ $message }}@enderror</small>
-                        </div>
-
-
-                        <div class="col-md-4 fv-plugins-icon-container">
-                            <label class="form-label" for="contact_person">{{ __('Contact Person') }}</label>
-                            <input id="contact_person" name="contact_person" type="text" class="form-control"
-                                   placeholder="Enter contact person's name" required/>
-                            <small
-                                class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback">@error('contact_person'){{ $message }}@enderror</small>
-                        </div>
-
-                        <div class="col-md-4 fv-plugins-icon-container">
-                            <label class="form-label" for="company_website">{{ __('Company Website') }}</label>
-                            <input id="company_website" name="company_website" type="text" class="form-control"
-                                   placeholder="https://example.com" required/>
-                            <small
-                                class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback">@error('company_website'){{ $message }}@enderror</small>
-                        </div>
-
-                        <div class="col-md-4 fv-plugins-icon-container">
-                            <label class="form-label" for="company_industry">{{ __('Company Industry') }}</label>
-                            <input id="company_industry" name="company_industry" type="text" class="form-control"
-                                   placeholder="Enter industry type (e.g., IT, Healthcare)" required/>
-                            <small
-                                class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback">@error('company_industry'){{ $message }}@enderror</small>
-                        </div>
-
-                        <div class="col-md-4 fv-plugins-icon-container">
-                            <label class="form-label"
-                                   for="service_request_type">{{ __('Service Request Type') }}</label>
-                            <select id="service_request_type" name="service_request_type" class="form-control" required>
-                                <option value="">{{ __('Select service request type') }}</option>
-                                <option value="Process/Operations Optimization">Process/Operations Optimization</option>
-                                <option value="Quality Assurance & Compliance">Quality Assurance & Compliance</option>
-                                <option value="Project Management Excellence">Project Management Excellence</option>
-                                <option value="CMMI for Service (SVC)">CMMI for Service (SVC)</option>
-                                <option value="CMMI for Development (DEV)">CMMI for Development (DEV)</option>
-                                <option value="ISO 9001: 2015 Quality Management System">ISO 9001: 2015 Quality
-                                    Management System
-                                </option>
-                                <option value="ISO 27001 Information Security Management System">ISO 27001 Information
-                                    Security Management System
-                                </option>
-                                <option value="ISO 20000-1 IT Service Management System">ISO 20000-1 IT Service
-                                    Management System
-                                </option>
-                                <option value="ISO 45001 Occupational Health and Safety">ISO 45001 Occupational Health
-                                    and Safety
-                                </option>
-                                <option value="Other">Other</option>
-
-
-                            </select>
-                            <small
-                                class="fv-plugins-message-container fv-plugins-message-container--enabled invalid-feedback">@error('service_request'){{ $message }}@enderror</small>
-                        </div>
-                    </div>
+                <div>
+                    <a href="{{ route('survey.index') }}"
+                       class="btn btn-primary btn-sm">
+                        Back to Survey List
+                    </a>
                 </div>
             </div>
         </div>
 
-        <!-- Survey questions section -->
-        <div class="col-12 mb-4">
-            <div class="card overflow-auto" style="max-height: 500px;">
-                <!-- Questions -->
-                <div class="card-body">
-                    <div class="col-12">
-                        <h6>{{ __('Business Intake Evaluation') }}</h6>
-                        <hr class="mt-0">
-                    </div>
+    </x-slot>
 
-                    <div class="row gy-3 mt-0">
-                        @foreach($categories as $category)
-                            <!-- Category Header -->
-                            <div class="col-12">
-                                <h6><strong>{{ $loop->iteration }} - {{ $category->name }}</strong></h6>
+    @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @elseif(session('error'))
+        <div class="alert alert-danger">{{ session('error') }}</div>
+    @endif
+
+    <form action="{{ route('survey.store') }}" method="POST" class="mt-2">
+        @csrf
+
+        <div id="step-container">
+            {{-- Step 1: General Information --}}
+            <div class="step">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">General Information</h5>
+                        <div class="row g-3">
+
+                            <div class="col-md-6">
+                                <label class="form-label">Company Name</label>
+                                <input type="text" name="company_name" class="form-control" required>
+                                @error('company_name')
+                                <div class="text-danger small">{{ $message }}</div> @enderror
                             </div>
 
-                            <!-- Questions for this category -->
-                            @foreach($category->questions as $question)
-                                <div class="col-md-6 mt-0">
-                                    <label class="form-label">{{ $question->text }}</label>
+                            <div class="col-md-6">
+                                <label class="form-label">Contact Person</label>
+                                <input type="text" name="contact_person" class="form-control" required>
+                                @error('contact_person')
+                                <div class="text-danger small">{{ $message }}</div> @enderror
+                            </div>
 
-                                    @if($question->options)
+                            <div class="col-md-6">
+                                <label class="form-label">Company Website</label>
+                                <input type="text" name="company_website" class="form-control" required>
+                                @error('company_website')
+                                <div class="text-danger small">{{ $message }}</div> @enderror
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Company Industry</label>
+                                <input type="text" name="company_industry" class="form-control" required>
+                                @error('company_industry')
+                                <div class="text-danger small">{{ $message }}</div> @enderror
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Service Request Type</label>
+                                <select name="service_request_type" class="form-select" required>
+                                    <option value="">Select service request type</option>
+                                    <option>Process/Operations Optimization</option>
+                                    <option>Quality Assurance & Compliance</option>
+                                    <option>Project Management Excellence</option>
+                                    <option>CMMI for Service (SVC)</option>
+                                    <option>CMMI for Development (DEV)</option>
+                                    <option>ISO 9001: 2015 Quality Management System</option>
+                                    <option>ISO 27001 Information Security Management System</option>
+                                    <option>ISO 20000-1 IT Service Management System</option>
+                                    <option>ISO 45001 Occupational Health and Safety</option>
+                                    <option>Other</option>
+                                </select>
+                                @error('service_request_type')
+                                <div class="text-danger small">{{ $message }}</div> @enderror
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Steps 2+: Categories --}}
+            @foreach($categories as $category)
+                <div class="step d-none">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title mb-3">{{ $loop->iteration }} - {{ $category->name }}</h5>
+                            <div class="row g-3">
+
+                                @foreach($category->questions as $question)
+                                    <div class="col-md-12">
+                                        <label class="form-label">{{ $question->text }}</label>
+
                                         @if($question->options)
                                             @foreach(json_decode($question->options) as $option)
-                                                @if(is_object($option) && isset($option->text) && isset($option->score))
+                                                @if(is_object($option) && isset($option->text))
                                                     <div class="form-check">
-                                                        <input class="form-check-input"
-                                                               type="radio"
-                                                               name="questions[{{ $question->id }}]"
-                                                               value='@json(["text" => $option->text, "score" => $option->score])'
-                                                               id="q{{ $question->id }}_{{ $loop->index }}"
-                                                               required>
+                                                        <input
+                                                            type="radio"
+                                                            class="form-check-input"
+                                                            name="questions[{{ $question->id }}]"
+                                                            id="q{{ $question->id }}_{{ $loop->index }}"
+                                                            value='@json(["text" => $option->text, "score" => $option->score])'
+                                                            required
+                                                        >
                                                         <label class="form-check-label"
                                                                for="q{{ $question->id }}_{{ $loop->index }}">
                                                             {{ $option->text }}
@@ -151,38 +122,72 @@
                                                     </div>
                                                 @endif
                                             @endforeach
+                                        @else
+                                            <textarea name="questions[{{ $question->id }}]" class="form-control"
+                                                      rows="3" required></textarea>
                                         @endif
+                                    </div>
+                                @endforeach
 
-                                    @else
-                                        <textarea class="form-control"
-                                                  name="questions[{{ $question->id }}]"
-                                                  rows="3"
-                                                  required></textarea>
-                                    @endif
-                                </div>
-                            @endforeach
-                        @endforeach
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            @endforeach
         </div>
 
-        {{-- Action buttons --}}
-        <div class="col-12 mb-4">
-            <div class="card">
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <p class="mb-0">You can save your progress to resume later or submit your responses to finalize the
-                        survey.</p>
-                    <div>
-                        <button type="submit" class="btn btn-secondary me-2" name="action" value="save">
-                            Save Progress
-                        </button>
-                        <button type="submit" class="btn btn-primary" name="action" value="submit">
-                            Submit
-                        </button>
-                    </div>
-                </div>
+        {{-- Navigation Buttons --}}
+        <div class="d-flex justify-content-between mt-4">
+            <button type="button" id="prevBtn" class="btn btn-secondary d-none">
+                Previous
+            </button>
+
+            <div class="ms-auto">
+                <button type="button" id="nextBtn" class="btn btn-primary">
+                    Next
+                </button>
+
+                <button type="submit" id="submitBtn" class="btn btn-success d-none">
+                    Submit
+                </button>
             </div>
         </div>
     </form>
+
+    {{-- Stepper Script --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const steps = document.querySelectorAll('.step');
+            const nextBtn = document.getElementById('nextBtn');
+            const prevBtn = document.getElementById('prevBtn');
+            const submitBtn = document.getElementById('submitBtn');
+            let currentStep = 0;
+
+            function showStep(index) {
+                steps.forEach((step, i) => {
+                    step.classList.toggle('d-none', i !== index);
+                });
+
+                prevBtn.classList.toggle('d-none', index === 0);
+                nextBtn.classList.toggle('d-none', index === steps.length - 1);
+                submitBtn.classList.toggle('d-none', index !== steps.length - 1);
+            }
+
+            nextBtn.addEventListener('click', function () {
+                if (currentStep < steps.length - 1) {
+                    currentStep++;
+                    showStep(currentStep);
+                }
+            });
+
+            prevBtn.addEventListener('click', function () {
+                if (currentStep > 0) {
+                    currentStep--;
+                    showStep(currentStep);
+                }
+            });
+
+            showStep(currentStep); // Start on first step
+        });
+    </script>
 </x-app-layout>
