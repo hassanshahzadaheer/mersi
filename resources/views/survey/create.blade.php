@@ -1,8 +1,23 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Survey') }}
-        </h2>
+        <div class="d-flex justify-content-between align-items-center px-3 mb-4">
+            <div>
+                <h2 class="h2 fw-bold text-dark m-0">
+                    Business Intake Survey
+                </h2>
+                <p class="text-muted small mt-1 mb-0">
+                    Complete this assessment to help us understand your organization better
+                </p>
+            </div>
+
+            <!-- Right: Back to Dashboard Button -->
+            <div>
+                <a href="{{ route('survey.index') }}"
+                   class="btn btn-primary btn-sm">
+                    ️Back to Survey List
+                </a>
+            </div>
+        </div>
     </x-slot>
     @if(session('success'))
         <div class="alert alert-success">

@@ -101,113 +101,133 @@ class Survey extends Controller
 
     public function evaluateSurvey($businessId)
     {
-        // Try to find the business profile
-        $businessProfile = SurveyBusinessProfile::find($businessId);
+        $businessProfile = SurveyBusinessProfile::findOrFail($businessId);
 
-        // Check if business profile exists
-        if (!$businessProfile) {
-            return response()->json(['error' => 'Business profile not found'], 404);
-        }
-
-        // Fetch survey responses with related question and category
         $responses = SurveyEvaluation::where('business_profile_id', $businessId)
-            ->with(['question.category', 'businessProfile'])
+            ->with(['question.category'])
             ->get();
 
-        // Initialize scoring
-        $totalScore = 0;
-        $maxScore = count($responses) * 2; // Max possible score if all answers are compliant
         $evaluationData = [];
+        $totalScore = 0;
+        $maxScore = $responses->count() * 4;
 
-        // Compliance mapping for each response
-        $complianceRules = [
-            "We don’t use data analysis" => [
-                "standard" => "CMMI DEV (Process Optimization)", "status" => "❌ Non-Compliant", "score" => 0
-            ],
-            "OKRs are used with full transparency" => [
-                "standard" => "ISO 9001 (Quality & Objectives)", "status" => "✅ Compliant", "score" => 2
-            ],
-            "We use data sometimes" => [
-                "standard" => "CMMI DEV (Process Optimization)", "status" => "⚠️ Partially Compliant", "score" => 1
-            ],
-            "No data sharing" => ["standard" => "ISO 9001 (Data Control)", "status" => "❌ Non-Compliant", "score" => 0],
-            "Some processes are scalable outside the organization (e.g., franchises)" => [
-                "standard" => "ISO 9001 (Scalability)", "status" => "✅ Compliant", "score" => 2
-            ],
-            "Traditional metrics (e.g., sales, profit)" => [
-                "standard" => "ISO 9001 (Performance Tracking)", "status" => "⚠️ Partially Compliant", "score" => 1
-            ],
-            "Risk-taking and failure are embraced and celebrated" => [
-                "standard" => "ISO 9001 (Continuous Improvement)", "status" => "✅ Compliant", "score" => 2
-            ],
-            "Decentralized decisions in customer-facing areas" => [
-                "standard" => "CMMI SVC (Service Delivery)", "status" => "⚠️ Partially Compliant", "score" => 1
-            ],
-            "Some teams use social tools (e.g., Slack, Teams)" => [
-                "standard" => "ISO 9001 (Communication)", "status" => "⚠️ Partially Compliant", "score" => 1
-            ],
-        ];
-
-        // Process responses dynamically
+        // Step 1: Collect evaluation data
         foreach ($responses as $response) {
-            $questionText = $response->question->text ?? "Unknown Question";
-            $responseText = $response->response ?? "No response";
-            $categoryName = $response->question->category->name ?? 'Uncategorized';
+            $question = $response->question;
+            $responseText = $response->response ?? 'No Response';
 
-            // Default compliance if no mapping exists
-            $complianceData = $complianceRules[$responseText] ?? [
-                "standard" => "N/A",
-                "status" => "⚠️ Partially Compliant",
-                "score" => 1
-            ];
+            [$score, $serviceType] = $this->getScoreAndServiceType($question, $responseText);
+            $status = $this->calculateStatus($score);
 
-            // Add to total score
-            $totalScore += $complianceData["score"];
-
-            // Store structured data for the Blade view
             $evaluationData[] = [
-                "question" => $questionText,
+                "question" => $question->text ?? "Unknown Question",
                 "response" => $responseText,
-                "category" => $categoryName,
-                "standard" => $complianceData["standard"],
-                "status" => $complianceData["status"],
-                "score" => $complianceData["score"]
+                "category" => $question->category->name ?? 'Uncategorized',
+                "standard" => $serviceType,
+                "status" => $status,
+                "score" => $score
             ];
+
+            $totalScore += $score;
         }
 
-        // Group compliance scores by standard
-        $complianceBreakdown = [];
+        // Step 2: Group by category
+        $categoryData = [];
+        foreach ($evaluationData as $data) {
+            $category = $data['category'];
+
+            if (!isset($categoryData[$category])) {
+                $categoryData[$category] = [
+                    'totalScore' => 0,
+                    'maxScore' => 0,
+                    'statuses' => [],
+                    'count' => 0
+                ];
+            }
+
+            $categoryData[$category]['totalScore'] += $data['score'];
+            $categoryData[$category]['maxScore'] += 4; // Each question has a max score of 4
+            $categoryData[$category]['statuses'][] = $data['status'];
+            $categoryData[$category]['count'] += 1;
+        }
+
+        // Step 3: Calculate percentages and determine dominant status per category
+        foreach ($categoryData as $category => &$data) {
+            $data['percentage'] = ($data['maxScore'] > 0)
+                ? number_format(($data['totalScore'] / $data['maxScore']) * 100, 2)
+                : 0;
+
+            // Calculate average score to determine dominant status
+            $avgScore = $data['totalScore'] / $data['count'];
+            $data['status'] = $this->calculateStatus($avgScore);
+        }
+
+        $complianceBreakdown = $this->groupComplianceData($evaluationData);
+        $compliancePercentage = $this->calculateCompliancePercentage($totalScore, $maxScore);
+
+        return view('survey.evaluation', compact(
+            'businessProfile',
+            'evaluationData',
+            'complianceBreakdown',
+            'totalScore',
+            'compliancePercentage',
+            'categoryData'
+        ));
+    }
+
+    private function getScoreAndServiceType($question, $responseText)
+    {
+        $options = json_decode($question->options, true);
+        $selectedOption = collect($options)->firstWhere('text', $responseText);
+
+        $score = $selectedOption['score'] ?? 0;
+        $serviceType = $selectedOption['service_type'] ?? 'N/A';
+
+        return [$score, $serviceType];
+    }
+
+    private function calculateStatus($score)
+    {
+        if ($score >= 4.0) {
+            return "✅ Compliant";
+        } elseif ($score >= 2.0) {
+            return "⚠️ Partially Compliant";
+        } else {
+            return "❌ Non-Compliant";
+        }
+    }
+
+    private function groupComplianceData($evaluationData)
+    {
+        $grouped = [];
+
         foreach ($evaluationData as $data) {
             $standard = $data['standard'];
 
-            if (!isset($complianceBreakdown[$standard])) {
-                $complianceBreakdown[$standard] = [
+            if (!isset($grouped[$standard])) {
+                $grouped[$standard] = [
                     'name' => $standard,
                     'totalScore' => 0,
                     'maxScore' => 0
                 ];
             }
 
-            $complianceBreakdown[$standard]['totalScore'] += $data['score'];
-            $complianceBreakdown[$standard]['maxScore'] += 2; // Each question max score is 2
+            $grouped[$standard]['totalScore'] += $data['score'];
+            $grouped[$standard]['maxScore'] += 4;
         }
 
-// Convert breakdown to percentages
-        foreach ($complianceBreakdown as $key => $breakdown) {
-            $complianceBreakdown[$key]['percentage'] = ($breakdown['maxScore'] > 0)
+        foreach ($grouped as &$breakdown) {
+            $breakdown['percentage'] = ($breakdown['maxScore'] > 0)
                 ? number_format(($breakdown['totalScore'] / $breakdown['maxScore']) * 100, 2)
                 : 0;
         }
 
-// Convert associative array to indexed array for Blade compatibility
-        $complianceBreakdown = array_values($complianceBreakdown);
+        return array_values($grouped);
+    }
 
-        // Calculate overall compliance percentage
-        $compliancePercentage = $maxScore > 0 ? ($totalScore / $maxScore) * 100 : 0;
-
-        // Return view with data
-        return view('survey.evaluation',
-            compact('businessProfile', 'evaluationData', 'totalScore', 'compliancePercentage'));
+    private function calculateCompliancePercentage($totalScore, $maxScore)
+    {
+        return $maxScore > 0 ? number_format(($totalScore / $maxScore) * 100, 2) : 0;
     }
 
 

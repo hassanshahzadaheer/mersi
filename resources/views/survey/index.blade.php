@@ -1,9 +1,24 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-                {{ __('Survey Responses') }}
-            </h2>
+            <div class="d-flex justify-content-between align-items-center px-3 mb-4">
+                <div>
+                    <h2 class="h2 fw-bold text-dark m-0">
+                        Business Intake Survey Responses
+                    </h2>
+                    <p class="text-muted small mt-1 mb-0">
+                        View and manage all survey responses submitted by your organization
+                    </p>
+                </div>
+
+                <!-- Right: Back to Dashboard Button -->
+                <div>
+                    <a href="{{ route('survey.create') }}"
+                       class="btn btn-primary btn-sm">
+                        ️Create New Survey
+                    </a>
+                </div>
+            </div>
         </div>
     </x-slot>
 
