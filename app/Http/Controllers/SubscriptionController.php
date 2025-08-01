@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Subscription;
 use Illuminate\Http\Request;
-use Illuminate\support\Facades\Auth;
+use Illuminate\Support\Facades\Auth;
 
 
 class SubscriptionController extends Controller
