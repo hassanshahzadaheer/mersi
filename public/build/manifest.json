@@ -1,0 +1,68 @@
+{
+  "resources/assets/css/demo.css": {
+    "file": "assets/demo-DKF97Pzq.css",
+    "src": "resources/assets/css/demo.css",
+    "isEntry": true
+  },
+  "resources/assets/vendor/css/core.css": {
+    "file": "assets/core-PJ0AFeID.css",
+    "src": "resources/assets/vendor/css/core.css",
+    "isEntry": true
+  },
+  "resources/assets/vendor/css/pages/page-auth.css": {
+    "file": "assets/page-auth-eS1m09qX.css",
+    "src": "resources/assets/vendor/css/pages/page-auth.css",
+    "isEntry": true
+  },
+  "resources/assets/vendor/css/theme-default.css": {
+    "file": "assets/theme-default-Bw9zDmT1.css",
+    "src": "resources/assets/vendor/css/theme-default.css",
+    "isEntry": true
+  },
+  "resources/assets/vendor/fonts/boxicons.css": {
+    "file": "assets/boxicons-DO3fTVR1.css",
+    "src": "resources/assets/vendor/fonts/boxicons.css",
+    "isEntry": true
+  },
+  "resources/assets/vendor/fonts/boxicons/boxicons.eot": {
+    "file": "assets/boxicons-fqDhfsHa.eot",
+    "src": "resources/assets/vendor/fonts/boxicons/boxicons.eot"
+  },
+  "resources/assets/vendor/fonts/boxicons/boxicons.svg": {
+    "file": "assets/boxicons-e1o-z2FJ.svg",
+    "src": "resources/assets/vendor/fonts/boxicons/boxicons.svg"
+  },
+  "resources/assets/vendor/fonts/boxicons/boxicons.ttf": {
+    "file": "assets/boxicons-BBsJ98nm.ttf",
+    "src": "resources/assets/vendor/fonts/boxicons/boxicons.ttf"
+  },
+  "resources/assets/vendor/fonts/boxicons/boxicons.woff": {
+    "file": "assets/boxicons-kvn6whdv.woff",
+    "src": "resources/assets/vendor/fonts/boxicons/boxicons.woff"
+  },
+  "resources/assets/vendor/fonts/boxicons/boxicons.woff2": {
+    "file": "assets/boxicons-i616DiHt.woff2",
+    "src": "resources/assets/vendor/fonts/boxicons/boxicons.woff2"
+  },
+  "resources/assets/vendor/libs/apex-charts/apex-charts.css": {
+    "file": "assets/apex-charts-CaTIFWiX.css",
+    "src": "resources/assets/vendor/libs/apex-charts/apex-charts.css",
+    "isEntry": true
+  },
+  "resources/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css": {
+    "file": "assets/perfect-scrollbar-BD01zJ87.css",
+    "src": "resources/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css",
+    "isEntry": true
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-BSXzExUu.css",
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-85S0ktbJ.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  }
+}
