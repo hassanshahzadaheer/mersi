@@ -10,16 +10,13 @@
                         Complete this assessment to help us understand your organization better.
                     </p>
                 </div>
-
                 <div>
-                    <a href="{{ route('survey.index') }}"
-                       class="btn btn-primary btn-sm">
+                    <a href="{{ route('survey.index') }}" class="btn btn-primary btn-sm">
                         Back to Survey List
                     </a>
                 </div>
             </div>
         </div>
-
     </x-slot>
 
     @if(session('success'))
@@ -31,6 +28,17 @@
     <form action="{{ route('survey.store') }}" method="POST" class="mt-2">
         @csrf
 
+        {{-- Progress Bar and Step Info --}}
+        <div class="mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span id="section-info" class="fw-bold text-dark">Section 1 of {{ 1 + $categories->count() }}</span>
+                <span id="percentage" class="text-muted small">0%</span>
+            </div>
+            <div class="progress" style="height: 8px;">
+                <div id="progress-bar" class="progress-bar bg-primary" role="progressbar" style="width: 0%;"></div>
+            </div>
+        </div>
+
         <div id="step-container">
             {{-- Step 1: General Information --}}
             <div class="step">
@@ -41,28 +49,32 @@
 
                             <div class="col-md-6">
                                 <label class="form-label">Company Name</label>
-                                <input type="text" name="company_name" class="form-control" required>
+                                <input type="text" name="company_name" class="form-control"
+                                       placeholder="Enter your company name" required>
                                 @error('company_name')
                                 <div class="text-danger small">{{ $message }}</div> @enderror
                             </div>
 
                             <div class="col-md-6">
                                 <label class="form-label">Contact Person</label>
-                                <input type="text" name="contact_person" class="form-control" required>
+                                <input type="text" name="contact_person" class="form-control"
+                                       placeholder="Enter contact person's name" required>
                                 @error('contact_person')
                                 <div class="text-danger small">{{ $message }}</div> @enderror
                             </div>
 
                             <div class="col-md-6">
                                 <label class="form-label">Company Website</label>
-                                <input type="text" name="company_website" class="form-control" required>
+                                <input type="text" name="company_website" class="form-control"
+                                       placeholder="Enter company website" required>
                                 @error('company_website')
                                 <div class="text-danger small">{{ $message }}</div> @enderror
                             </div>
 
                             <div class="col-md-6">
                                 <label class="form-label">Company Industry</label>
-                                <input type="text" name="company_industry" class="form-control" required>
+                                <input type="text" name="company_industry" class="form-control"
+                                       placeholder="Enter industry type" required>
                                 @error('company_industry')
                                 <div class="text-danger small">{{ $message }}</div> @enderror
                             </div>
@@ -124,7 +136,8 @@
                                             @endforeach
                                         @else
                                             <textarea name="questions[{{ $question->id }}]" class="form-control"
-                                                      rows="3" required></textarea>
+                                                      rows="3" placeholder="Type your answer here..."
+                                                      required></textarea>
                                         @endif
                                     </div>
                                 @endforeach
@@ -161,7 +174,18 @@
             const nextBtn = document.getElementById('nextBtn');
             const prevBtn = document.getElementById('prevBtn');
             const submitBtn = document.getElementById('submitBtn');
+            const progressBar = document.getElementById('progress-bar');
+            const sectionInfo = document.getElementById('section-info');
+            const percentage = document.getElementById('percentage');
+            const totalSteps = steps.length;
             let currentStep = 0;
+
+            function updateProgress() {
+                const progressPercent = Math.round((currentStep + 1) / totalSteps * 100);
+                progressBar.style.width = progressPercent + '%';
+                sectionInfo.textContent = `Section ${currentStep + 1} of ${totalSteps}`;
+                percentage.textContent = `${progressPercent}%`;
+            }
 
             function showStep(index) {
                 steps.forEach((step, i) => {
@@ -171,6 +195,8 @@
                 prevBtn.classList.toggle('d-none', index === 0);
                 nextBtn.classList.toggle('d-none', index === steps.length - 1);
                 submitBtn.classList.toggle('d-none', index !== steps.length - 1);
+
+                updateProgress();
             }
 
             nextBtn.addEventListener('click', function () {
@@ -187,7 +213,7 @@
                 }
             });
 
-            showStep(currentStep); // Start on first step
+            showStep(currentStep); // Initialize on load
         });
     </script>
 </x-app-layout>

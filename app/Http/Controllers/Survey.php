@@ -20,7 +20,7 @@ class Survey extends Controller
         $surveys = SurveyBusinessProfile::with(['evaluations.question.category'])
             ->where('user_id', auth()->id())
             ->latest()
-            ->paginate(5);
+            ->paginate(6);
 
         return view('survey.index', compact('surveys'));
     }
