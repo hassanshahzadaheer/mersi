@@ -29,23 +29,32 @@
 
 
     {{-- Current Subscription Section --}}
-    <div class="card mb-3">
-        <div class="card-body d-flex flex-column flex-md-row align-items-md-center justify-content-between">
-            <div>
-                <h5 class="card-title mb-2">{{ ucwords( $subscriptions->first()->plan_name ) }}</h5>
-                <p class="mb-1 text-muted">Started
-                    on {{ Carbon::parse($subscriptions->first()->start_date)->format('M d, Y') }}</p>
-                <p class="mb-1 text-muted">Next billing
-                    on {{ Carbon::parse($subscriptions->first()->renewal_date)->format('M d, Y') }}</p>
-                <span class="badge bg-success mt-2">Active</span>
-                <span class="fw-bold ms-2">${{ number_format($subscriptions->first()->price, 2) }}/month</span>
-            </div>
-            <div class="mt-4 mt-md-0">
-                <a href="#" class="btn btn-outline-primary me-2">Update Payment Method</a>
-                <a href="#" class="btn btn-outline-danger">Cancel Subscription</a>
+    @if($subscriptions->isNotEmpty() && $subscriptions->first())
+        <div class="card mb-3">
+            <div class="card-body d-flex flex-column flex-md-row align-items-md-center justify-content-between">
+                <div>
+                    <h5 class="card-title mb-2">{{ ucwords( $subscriptions->first()->plan_name ) }}</h5>
+                    <p class="mb-1 text-muted">Started
+                        on {{ Carbon::parse($subscriptions->first()->start_date)->format('M d, Y') }}</p>
+                    <p class="mb-1 text-muted">Next billing
+                        on {{ Carbon::parse($subscriptions->first()->renewal_date)->format('M d, Y') }}</p>
+                    <span class="badge bg-success mt-2">Active</span>
+                    <span class="fw-bold ms-2">${{ number_format($subscriptions->first()->price, 2) }}/month</span>
+                </div>
+                <div class="mt-4 mt-md-0">
+                    <a href="#" class="btn btn-outline-primary me-2">Update Payment Method</a>
+                    <a href="#" class="btn btn-outline-danger">Cancel Subscription</a>
+                </div>
             </div>
         </div>
-    </div>
+    @else
+        <div class="card mb-3">
+            <div class="card-body text-center py-5">
+                <p class="text-muted mb-0">No active subscription found.</p>
+                <a href="{{ route('subscription.index') }}" class="btn btn-primary mt-3">Browse Plans</a>
+            </div>
+        </div>
+    @endif
 
     {{-- Subscription History Section --}}
     <div class="card">
@@ -67,7 +76,7 @@
                 @foreach ($subscriptions as $subscription)
                     <tr>
                         <td>#{{ $subscription->id ?? 'N/A' }}</td>
-                        <td> {{ ucwords( $subscriptions->first()->plan_name ) }}  </td>
+                        <td>{{ ucwords( $subscription->plan_name ?? 'N/A' ) }}</td>
                         <td>${{ number_format($subscription->price, 2) }}</td>
                         <td>
                             @if ($subscription->status === 'active')
